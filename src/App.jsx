@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
 import { useEffect } from "react";
 
 function App() {
+  const [stream, setStream] = useState(null);
   let videoRef = useRef(null);
   let photoRef = useRef(null);
 
@@ -16,14 +17,17 @@ function App() {
         // attach the to the video tag
         let video = videoRef.current;
         video.srcObject = stream;
-        video.play();
+        video.onloadedmetadata = () => {
+          video.play();
+        };
+        setStream(stream);
       })
       .catch((err) => console.log("Video is not available", err));
   };
 
-  useEffect(() => {
-    getUserCamera();
-  }, []);
+  // useEffect(() => {
+  //   getUserCamera();
+  // }, []);
 
   // take a picture of a user
   const takePhoto = function () {
@@ -40,6 +44,15 @@ function App() {
 
     let ctx = photo.getContext("2d");
     ctx.drawImage(video, 0, 0, photo.width, photo.height);
+
+    stopCamera();
+  };
+
+  // Stop the camera stream
+  const stopCamera = function () {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop()); // Stop all media tracks
+    }
   };
 
   // clear image
@@ -53,6 +66,7 @@ function App() {
   return (
     <>
       <h1>Take a selfie</h1>
+      <button onClick={getUserCamera}>Click to open camera</button>
       <video ref={videoRef}></video>
       <button onClick={takePhoto}>Take a selfie</button>
       <canvas ref={photoRef}></canvas>
