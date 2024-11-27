@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import "./App.css";
-import { useEffect } from "react";
 
 function App() {
   const [stream, setStream] = useState(null);
@@ -24,10 +23,6 @@ function App() {
       })
       .catch((err) => console.log("Video is not available", err));
   };
-
-  // useEffect(() => {
-  //   getUserCamera();
-  // }, []);
 
   // take a picture of a user
   const takePhoto = function () {
